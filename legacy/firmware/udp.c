@@ -27,7 +27,10 @@
 
 static volatile char tiny = 0;
 
-void usbInit(void) { emulatorSocketInit(); }
+void usbInit(void) {
+  tiny = 0;
+  emulatorSocketInit();
+}
 
 #if DEBUG_LINK
 #define _ISDBG (((iface == 1) ? 'd' : 'n'))

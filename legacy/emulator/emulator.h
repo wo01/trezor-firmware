@@ -30,6 +30,7 @@ void emulatorPoll(void);
 void emulatorRandom(void *buffer, size_t size);
 
 void emulatorSocketInit(void);
+void emulatorSocketClose(void);
 size_t emulatorSocketRead(int *iface, void *buffer, size_t size);
 size_t emulatorSocketWrite(int iface, const void *buffer, size_t size);
 

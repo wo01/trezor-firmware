@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 #define TREZOR_UDP_PORT 21324
 
@@ -98,6 +99,11 @@ void emulatorSocketInit(void) {
   usb_main.fromlen = 0;
   usb_debug.fd = socket_setup(TREZOR_UDP_PORT + 1);
   usb_debug.fromlen = 0;
+}
+
+void emulatorSocketClose(void) {
+  close(usb_main.fd);
+  close(usb_debug.fd);
 }
 
 size_t emulatorSocketRead(int *iface, void *buffer, size_t size) {

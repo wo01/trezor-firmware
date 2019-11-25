@@ -273,9 +273,9 @@ void msg_read_common(char type, const uint8_t *buf, uint32_t len) {
   }
 
   if (msg_pos >= msg_size) {
-    msg_process(type, msg_id, fields, msg_in, msg_size);
     msg_pos = 0;
     read_state = READSTATE_IDLE;
+    msg_process(type, msg_id, fields, msg_in, msg_size);
   }
 }
 

@@ -26,6 +26,7 @@
 
 #include <libopencm3/stm32/flash.h>
 
+#include "emulator.h"
 #include "memory.h"
 #include "oled.h"
 #include "rng.h"
@@ -42,6 +43,8 @@ uint8_t *emulator_flash_base = NULL;
 
 uint32_t __stack_chk_guard;
 
+jmp_buf restart_env;
+
 static int random_fd = -1;
 
 static void setup_urandom(void);
@@ -53,7 +56,12 @@ void setup(void) {
 }
 
 void __attribute__((noreturn)) shutdown(void) {
-  for (;;) pause();
+  emulatorSocketClose();
+  sleep(5);
+  printf("SHUTDOWN\n");
+  longjmp(restart_env, 1);
+  for (;;)
+    ;
 }
 
 void emulatorRandom(void *buffer, size_t size) {

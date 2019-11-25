@@ -22,6 +22,11 @@
 
 #include <stdint.h>
 
+#if EMULATOR
+#include <setjmp.h>
+extern jmp_buf restart_env;
+#endif
+
 extern uint32_t __stack_chk_guard;
 
 void setup(void);

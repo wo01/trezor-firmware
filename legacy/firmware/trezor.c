@@ -149,6 +149,10 @@ int main(void) {
 #endif
 #endif
 
+#if EMULATOR
+  setjmp(restart_env);
+#endif
+
   oledDrawBitmap(40, 0, &bmp_logo64);
   oledRefresh();
 

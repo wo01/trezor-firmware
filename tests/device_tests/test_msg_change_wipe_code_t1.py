@@ -227,3 +227,37 @@ def test_set_pin_to_wipe_code(client):
     assert client.features.pin_protection is False
     ret = client.call_raw(messages.Ping(pin_protection=True))
     assert isinstance(ret, messages.Success)
+
+
+@pytest.mark.setup_client(pin=PIN4)
+def test_wipe_code_activate(client):
+    import time
+
+    device_id = client.features.device_id
+
+    # Set wipe code.
+    _set_wipe_code(client, WIPE_CODE4)
+
+    # Try to change the PIN.
+    ret = client.call_raw(messages.ChangePin(remove=False))
+    assert isinstance(ret, messages.ButtonRequest)
+
+    # Confirm intent to change the PIN.
+    client.debug.press_yes()
+    ret = client.call_raw(messages.ButtonAck())
+
+    # Enter the wipe code instead of the current PIN.
+    assert isinstance(ret, messages.PinMatrixRequest)
+    pin_encoded = client.debug.encode_pin(WIPE_CODE4)
+    ret = client._raw_write(messages.PinMatrixAck(pin=pin_encoded))
+
+    # Allow the device to display wipe code popup and restart.
+    time.sleep(7)
+
+    # Check that the device has been wiped.
+    client.init_device()
+
+    assert client.features.initialized is False
+    assert client.features.pin_protection is False
+    assert client.features.wipe_code_protection is False
+    assert client.features.device_id != device_id

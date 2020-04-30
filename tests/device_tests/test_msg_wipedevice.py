@@ -16,26 +16,18 @@
 
 import pytest
 
-from trezorlib import btc, device, messages as proto
+from trezorlib import device, messages as proto
 
 
 class TestMsgWipedevice:
     @pytest.mark.setup_client(pin=True, passphrase=True)
     def test_wipe_device(self, client):
         features = client.call_raw(proto.Initialize())
-        assert features.initialized is False  # private item
-        assert features.pin_protection is True
-        assert features.passphrase_protection is True
-        device_id = features.device_id
 
-        # unlock
-        btc.get_address(client, "Testnet", [0])
-
-        features = client.call_raw(proto.Initialize())
         assert features.initialized is True
         assert features.pin_protection is True
         assert features.passphrase_protection is True
-        assert device_id == features.device_id
+        device_id = features.device_id
 
         device.wipe(client)
         features = client.call_raw(proto.Initialize())
